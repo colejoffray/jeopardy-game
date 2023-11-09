@@ -37,6 +37,43 @@ function initBoard(){
   }
 }
 
+function randomInt(){
+  return Math.floor(Math.random() * (18418) + 1)
+}
+
+function buildCategories (){
+  
+  const fetchRequest1 = fetch(
+    `https://jservice.io/api/category?&id=${randomInt()}`
+  ).then((res) => res.json())
+  
+  const fetchRequest2 = fetch(
+    `https://jservice.io/api/category?&id=${randomInt()}`
+  ).then((res) => res.json())
+
+  const fetchRequest3 = fetch(
+    `https://jservice.io/api/category?&id=${randomInt()}`
+  ).then((res) => res.json())
+
+  const fetchRequest4 = fetch(
+    `https://jservice.io/api/category?&id=${randomInt()}`
+  ).then((res) => res.json())
+
+  const fetchRequest5 = fetch(
+    `https://jservice.io/api/category?&id=${randomInt()}`
+  ).then((res) => res.json())
+
+  const fetchRequest6 = fetch(
+    `https://jservice.io/api/category?&id=${randomInt()}`
+  ).then((res) => res.json())
+
+  const allData = Promise.all([fetchRequest1, fetchRequest2, fetchRequest3, fetchRequest4, fetchRequest5, fetchRequest6])
+
+  allData.then((res) => {
+    console.log(res)
+  })
+}
+
  function getClue() {
   console.log('hello world')
 }
