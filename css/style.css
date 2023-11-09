@@ -61,7 +61,7 @@ span {
   border-radius: 5px;
   margin: 5px;
   height: 100px;
-  flex-basis: 1;
+  flex: 1;
 }
 
 
