@@ -53,6 +53,10 @@ let catArray = [] //using global variable to store api object
 
 function buildCategories (){
   
+  if(!(document.getElementById('category-row').firstChild.innerText = '')){
+    resetBoard();
+  }
+  
   const fetchRequest1 = fetch(
     `https://jservice.io/api/category?&id=${randomInt()}`
   ).then((res) => res.json())
@@ -86,18 +90,74 @@ function buildCategories (){
   })
 }
 
-//alert the clue
+//reset Board 
+function resetBoard(){
+  let clueParent = document.getElementById('clue-board')
+  while(clueParent.firstChild){
+    clueParent.removeChild(clueParent.firstChild)
+  }
+
+  let catParent = document.getElementById('category-row')
+  while (catParent.firstChild){
+    catParent.removeChild(catParent.firstChild)
+  }
+
+  let score = document.getElementById('score')
+  score.innerText = '0'
+
+  initBoard()
+  initCatRow()
+}
+
+//FIGURE OUT THE CLUE FOR THE ITEM THAT IS CLICKED
+
  function getClue(e) {
+  //identifying the y coordinate of the target clicked (dollar value)
   const child = e.currentTarget 
   child.classList.add('clicked-box')
   const dollars = +e.target.textContent.substring(1)
-  const parent = child.parentNode
-  const index = Array.prototype.findIndex.call(parent.children, (c) => c === child)
-  let clueList = catArray[index].clues
-  console.log(clueList)
-  let itemClue = clueList.find(clue => clue.value === dollars)
-  console.log(itemClue.question)
-  alert(itemClue.question)
+
+  //identifying the y coordinate of the value clicked
+  const parent = child.parentNode /*finding parent of the item clicked e.g. 200$ is first row so index 0*/
+
+  const index = Array.prototype.findIndex.call(parent.children, (c) => c === child) /*finding the index of the item clicked in that parent*/
+
+  const clueList = catArray[index].clues /*using that index to look through cluelist and find approriate category and pulling the clues which gives us an array of objects (clues)*/
+
+
+  const itemClue = clueList.find(clue => clue.value === dollars) /*searching through that array and finding the clue that matches the y coordinate of item clicked (dollar amount)*/
+  console.log(itemClue)
+  showQuestion(itemClue, child, dollars)
+}
+
+//SHOW QUESTION TO USER AND GET THEIR ANSWER!
+function showQuestion(itemClue, child, dollars){
+    let userAnswer = prompt(itemClue.question).toLowerCase()
+    let correctAnswer = itemClue.answer.toLowerCase().replace(/<\/?[^>]+(>|$)/g, '')
+    let possiblePoints = dollars
+    child.innerHTML = itemClue.answer
+    child.removeEventListener('click', getClue)
+    evaluateAnswer(userAnswer, correctAnswer, possiblePoints)
+}
+
+function evaluateAnswer(userAnswer, correctAnswer, possiblePoints){
+  let checkAnswer = (userAnswer === correctAnswer) ? 'correct' : 'incorrect'
+  let confirmAnswer = 
+  confirm(`For $${possiblePoints}, you answered ${userAnswer}, and the correct answer was "${correctAnswer}". Your answer appears to be ${checkAnswer}. Click Ok to accept or click Cancel if the answer was not properly evaluated`)
+  awardPoint(checkAnswer, confirmAnswer, possiblePoints)
+}
+
+//AWARD POINTS
+function awardPoint(checkAnswer, confirmAnswer, possiblePoints){
+  if(!(checkAnswer === 'incorrect' && confirmAnswer === true)){
+    //award points
+    let target = document.getElementById('score')
+    let currentScore = +target.innerText
+    currentScore += possiblePoints
+    target.innerText = currentScore
+  }else {
+    alert('No points awarded')
+  }
 }
 
 
