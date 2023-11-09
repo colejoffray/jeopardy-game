@@ -1,5 +1,17 @@
 //Initialize the game board on page load
 initBoard()
+initCatRow()
+
+
+function initCatRow(){
+  let catRow = document.getElementById('category-row')
+  for(let i = 0; i < 6; i++){
+    let catItem = document.createElement('div')
+    catItem.className = 'clue-box category-box'
+    catRow.appendChild(catItem)
+  }
+}
+
 
 function initBoard(){
   let board = document.getElementById('clue-board')
@@ -8,6 +20,8 @@ function initBoard(){
     let row = document.createElement('div')
     let boxValue = 200 * (i + 1)
     row.className = 'clue-row'
+
+    //initial loop runs once, and then nested loop runs six times and appends 6 other divs to the row, then initial loop runs again....etc.
 
     for(let j = 0; j < 6; j++){
       let box = document.createElement('div')
