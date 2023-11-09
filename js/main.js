@@ -2,6 +2,9 @@
 initBoard()
 initCatRow()
 
+document.querySelector('button').addEventListener('click', buildCategories)
+
+//CREATED CATEGORY ROW
 
 function initCatRow(){
   let catRow = document.getElementById('category-row')
@@ -11,6 +14,9 @@ function initCatRow(){
     catRow.appendChild(catItem)
   }
 }
+
+
+//CREATED CLUE BOARD
 
 
 function initBoard(){
@@ -27,7 +33,7 @@ function initBoard(){
       let box = document.createElement('div')
       box.className= 'clue-box'
       box.textContent = `$${boxValue}`
-      box.addEventListener('click', getClue, false)
+      box.addEventListener('click', getClue)
       row.appendChild(box)
     }
 
@@ -37,9 +43,13 @@ function initBoard(){
   }
 }
 
+//CALLED API
+
 function randomInt(){
   return Math.floor(Math.random() * (18418) + 1)
 }
+
+let catArray = [] //using global variable to store api object
 
 function buildCategories (){
   
@@ -71,41 +81,38 @@ function buildCategories (){
 
   allData.then((res) => {
     console.log(res)
+    catArray = res
+    setCategories(catArray)
   })
 }
 
- function getClue() {
-  console.log('hello world')
+//alert the clue
+ function getClue(e) {
+  const child = e.currentTarget 
+  child.classList.add('clicked-box')
+  const dollars = +e.target.textContent.substring(1)
+  const parent = child.parentNode
+  const index = Array.prototype.findIndex.call(parent.children, (c) => c === child)
+  let clueList = catArray[index].clues
+  console.log(clueList)
+  let itemClue = clueList.find(clue => clue.value === dollars)
+  console.log(itemClue.question)
+  alert(itemClue.question)
 }
 
 
+//GENERATE CATEGORIES and LOAD TO THE BOARD
 
-//Example fetch using pokemonapi.co
-// document.querySelector('button').addEventListener('click', getFetch)
-
-function getFetch(){
-  const choice = document.querySelector('input').value
-  const url = `https://api.nasa.gov/planetary/apod?api_key=sfyst2WypPxQr4I6EsFE3mY4OCwAskdHt9af8etG&date=${choice}`
-
-  fetch(url)
-      .then(res => res.json()) // parse response as JSON
-      .then(data => {
-        let iFrame = document.querySelector('iframe')
-        let img = document.querySelector('img')
-        if(data.media_type === 'image'){
-          img.src = data.url 
-          iFrame.src = null
-        }else if(data.media_type === 'video') {
-          document.querySelector('iframe').src = data.url
-          img.src = null
-        }else {
-          console.log('error')
-        }
-        document.querySelector('h3').innerText = data.explanation
-        console.log(data)
-      })
-      .catch(err => {
-          console.log(`error ${err}`)
-      });
+function setCategories(catArray){
+  let element = document.getElementById('category-row')
+  let children = element.children
+  for(let i = 0; i < children.length; i++){
+    children[i].innerHTML = catArray[i].title
+  }
 }
+
+//Need to now use click event on clue items  to trigger a clue, going to alert the clue and add an answer
+
+
+
 
